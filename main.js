@@ -48,14 +48,18 @@ function resize() {
   $('#query-results_wrapper .dataTables_scrollBody').css('height',$(window).height() - activeMapLayersTableOffset - queryResultsFooterOffset);
   $('.dataTables_scrollBody').height(($(window).height() - 250));
   $('#query-results_wrapper .dataTables_scrollBody').css('overflow-x','hidden');
+  fixCellWidth();
+  map.updateSize();
+  plot();
+}
+
+function fixCellWidth() {
   if (hasScrollBar($('#active-layers .table-wrapper')[0]))
     $('#active-layers table tbody td:last-child').css('width', '37px');
   else {
     $('#active-layers table tbody td:last-child').css('width', '54px');
     $('#active-layers .table-wrapper').css('height', 'auto');
   }
-  map.updateSize();
-  plot();
 }
 
 window.onresize = resize;
@@ -122,9 +126,7 @@ function addToMap() {
     $('#active-layers a[title="Zoom To"]').click(function() {
       zoomToLayer(($(this).data('name')));
     });
-    if (hasScrollBar($('#active-layers .table-wrapper')[0])) {
-      $('#active-layers table thead th:last-child').css('width', '47px');
-    }
+    fixCellWidth();
   }
   else {
     alert('Oops.  This dataset is already on your map.');
