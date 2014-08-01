@@ -39,14 +39,14 @@ var queryResultsFooterOffset = 40;
 
 function resize() {
   var 	mapOffset 	= 103,
-        resultsTableOffset = 170,
         activeMapLayersTableOffset = 170,
         timeSliderOffset = 150;
 	sliderOffset = 50;
   $('#mapView').height($(window).height() - mapOffset - sliderOffset - timeSliderOffset);
-  $('#results .table-wrapper').height($(window).height() - resultsTableOffset);
+  $('#results .table-wrapper').height($(window).height() - 216);
   $('#active-layers .table-wrapper').height($(window).height() - activeMapLayersTableOffset);
   $('#query-results_wrapper .dataTables_scrollBody').css('height',$(window).height() - activeMapLayersTableOffset - queryResultsFooterOffset);
+  $('.dataTables_scrollBody').height(($(window).height() - 250));
   $('#query-results_wrapper .dataTables_scrollBody').css('overflow-x','hidden');
   if (hasScrollBar($('#active-layers .table-wrapper')[0]))
     $('#active-layers table tbody td:last-child').css('width', '37px');
