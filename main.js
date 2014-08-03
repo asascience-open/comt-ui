@@ -691,21 +691,16 @@ function query(xy) {
           lyr.activeQuery--;
           lyr.events.triggerEvent('loadend');
         }
-        var uvVars = {
-           'u,v'         : ['u','v']
-          ,'uwind,vwind' : ['uwind','vwind']
-        };
-        var keys = _.keys(uvVars);
-        var idx = keys.indexOf(this.v);
-        if (idx >= 0 && r.properties[uvVars[keys[idx]][0]] && r.properties[uvVars[keys[idx]][1]]) {
+        var uv = this.v.split(',');
+        if (uv.length == 2 && r.properties[uv[0]] && r.properties[uv[1]]) {
           var d = {
              data  : []
             ,vData : []
-            ,label : '<a target=_blank href="' + this.url + '">' + '&nbsp;' + this.title + ' (' + r.properties[uvVars[keys[idx]][0]].units + ')' + '</a>'
+            ,label : '<a target=_blank href="' + this.url + '">' + '&nbsp;' + this.title + ' (' + r.properties[uv[0]].units + ')' + '</a>'
           };
           for (var i = 0; i < r.properties.time.values.length; i++) {
-            var u = r.properties[uvVars[keys[idx]][0]].values[i];
-            var v = r.properties[uvVars[keys[idx]][1]].values[i];
+            var u = r.properties[uv[0]].values[i];
+            var v = r.properties[uv[1]].values[i];
             var spd = Math.sqrt(Math.pow(u,2) + Math.pow(v,2));
             var dir = Math.atan2(u,v) * 180 / Math.PI;
             dir += dir < 0 ? 360 : 0;
