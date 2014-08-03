@@ -715,7 +715,7 @@ function query(xy) {
           var d = {
              data  : []
             ,vData : []
-            ,label : '<a target=_blank href="' + this.url + '">' + '&nbsp;' + this.title + ' (' + r.properties['u'].units + ')' + '</a>'
+            ,label : '<a target=_blank href="' + this.url + '">' + '&nbsp;' + this.title + ' (' + r.properties['uwind'].units + ')' + '</a>'
           };
           for (var i = 0; i < r.properties.time.values.length; i++) {
             var u = r.properties['uwind'].values[i];
