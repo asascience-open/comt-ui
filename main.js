@@ -295,7 +295,10 @@ $(document).ready(function(){
   $('#active-layers button').on('click', clearMap);
   $('#clear-query').on('click', clearQuery);
   $('#active-layers div table tbody').tooltip({selector: 'tr'});
-  $('#active-layers div table tbody').popover({selector: 'a.popover-link'});
+  $('#active-layers div table tbody').popover({selector: 'a.popover-link'}).on('mouseup', function(e) {
+    if ($('.popover.fade.right.in').css('display') == 'block')
+        $('.popover').popover('hide');
+  });
 
   $('#time-series-graph').bind('plothover',function(event,pos,item) {
     if (item) {
