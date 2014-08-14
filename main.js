@@ -7,6 +7,8 @@ var prevPt;
 var proj3857 = new OpenLayers.Projection("EPSG:3857");
 var proj4326 = new OpenLayers.Projection("EPSG:4326");
 
+var wmsEndpoint = 'http://comt.sura.org/proxy_8080/wms/datasets/';
+
 var buttonClasses = [
    'primary'
   ,'success'
@@ -204,7 +206,7 @@ $(document).ready(function(){
 
   $.when(
     $.ajax({
-       url           : 'http://comt.sura.org:8080/wms/datasets'
+       url           : wmsEndpoint
       ,dataType      : 'jsonp'
       ,jsonpCallback : 'foo'
     })
@@ -439,7 +441,7 @@ function addWMS(d) {
   _gaq.push(['_trackEvent','add layer',d.group + '-' + d.layers]);
   var lyr = new OpenLayers.Layer.WMS(
      d.group + '-' + d.layers
-    ,'http://comt.sura.org:8080/wms/datasets/' + d.group + '/'
+    ,wmsEndpoint + d.group + '/'
     ,{
        layers      : d.layers
       ,transparent : true
