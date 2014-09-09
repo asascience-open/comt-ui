@@ -369,12 +369,11 @@ button.btn.dropdown-toggle.selectpicker.btn-default {
 	height: 44px;
 }
 
-#splash-content {
-	text-align	: center;
-	font-size	: 25px;
-	padding-top	: 10%;
+.modal-dialog {
+	margin: 19% auto;
 }
 
-#splash-content button {
-	margin-top: 2%;
+.modal-content {
+	text-align	: center;
+	font-size	: 17px;
 }

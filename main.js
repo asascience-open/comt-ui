@@ -322,6 +322,7 @@ $(document).ready(function(){
   });
 
   resize();
+  $('.modal').modal();
 });
 
 function syncTimeSlider(t) {
