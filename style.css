@@ -368,3 +368,13 @@ button.btn.dropdown-toggle.selectpicker.btn-default {
 #active-layers .table-wrapper table tbody tr td > div {
 	height: 44px;
 }
+
+#splash-content {
+	text-align	: center;
+	font-size	: 25px;
+	padding-top	: 10%;
+}
+
+#splash-content button {
+	margin-top: 2%;
+}
