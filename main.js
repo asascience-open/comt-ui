@@ -322,7 +322,9 @@ $(document).ready(function(){
   });
 
   resize();
-  $('.modal').modal();
+  if (!/DEV/.test(document.title)) {
+    $('.modal').modal();
+  }
 });
 
 function syncTimeSlider(t) {
