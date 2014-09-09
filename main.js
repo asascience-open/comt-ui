@@ -7,8 +7,6 @@ var prevPt;
 var proj3857 = new OpenLayers.Projection("EPSG:3857");
 var proj4326 = new OpenLayers.Projection("EPSG:4326");
 
-var wmsEndpoint = 'http://comt.sura.org/proxy_8080/wms/datasets/';
-
 var buttonClasses = [
    'primary'
   ,'success'

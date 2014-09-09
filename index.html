@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Coastal and Ocean Modeling Testbed</title>
+    <title><!--#echo var="title" --></title>
     <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.2/css/jquery.dataTables.css">
     <link rel="stylesheet" type="text/css" href="./lib/bootstrap-3.2.0-dist/css/bootstrap.css"/>
     <link rel="stylesheet" type="text/css" href="./lib/bootstrap-select/bootstrap-select.css"/>
@@ -27,7 +27,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="http://www.ioos.noaa.gov/">Coastal and Ocean Modeling Testbed<img src="img/ioos_blue2.png" alt="IOOS" /></a>
+          <a class="navbar-brand" href="http://www.ioos.noaa.gov/"><!--#echo var="title" --><img src="img/ioos_blue2.png" alt="IOOS" /></a>
         </div>
         <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
@@ -109,6 +109,9 @@
     <script type="text/javascript" src="./lib/OpenLayers-2.12-rc2-ie10-fix/OpenLayers.js"></script>
     <script type="text/javascript" src="./lib/underscore-min.js"></script>
     <script type="text/javascript" src="./lib/dateFormat.js"></script>
+    <script>
+      var wmsEndpoint = '<!--#echo var="wms" -->';
+    </script>
     <script type="text/javascript" src="main.js"></script>
 <script type="text/javascript">
   var _gaq = _gaq || [];
