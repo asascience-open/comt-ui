@@ -453,7 +453,7 @@ function addWMS(d) {
     ,{
        isBaseLayer      : false
       ,projection       : proj3857
-      ,singleTile       : true
+      ,singleTile       : singleTile
       ,wrapDateLine     : true
       ,visibility       : true
       ,opacity          : 1
