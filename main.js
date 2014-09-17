@@ -137,7 +137,33 @@ function hasScrollBar(div) {
     return (div.scrollHeight != div.clientHeight);
 }
 
-$(document).ready(function(){
+$(document).ready(function() {
+  $('ul.nav li:first-child a').on('click', function(e){
+    e.preventDefault();
+    if ($(this).hasClass('active'))
+      return false;
+    else {
+      $('#mapView, #map-view-col, #map-col').hide();
+      $('#catalogue').show();
+      $('li.active').removeClass('active');
+      $(this).parent().addClass('active');
+      resize();
+    }
+  });
+
+  $('ul.nav li:last-child a').on('click', function(e){
+    e.preventDefault();
+    if ($(this).hasClass('active'))
+      return false;
+    else {
+      $('#catalogue').hide();
+      $('#mapView, #map-view-col, #map-col').show();
+      $('li.active').removeClass('active');
+      $(this).parent().addClass('active');
+      resize();
+    }
+  });
+
   lyrQuery = new OpenLayers.Layer.Vector(
      'Query points'
     ,{styleMap : new OpenLayers.StyleMap({
@@ -389,31 +415,6 @@ function syncQueryResults() {
     });
     $('#query-results').DataTable().clear();
     $('#query-results').DataTable().rows.add(_.pluck(_.sortBy(c,function(o){return o.name.toUpperCase()}),'tr')).draw();
-    $('ul.nav li:first-child a').on('click', function(e){
-      e.preventDefault();
-      if ($(this).hasClass('active'))
-        return false;
-      else {
-        $('#mapView, #map-view-col, #map-col').hide();
-        $('#catalogue').show();
-        $('li.active').removeClass('active');
-        $(this).parent().addClass('active');
-        resize();
-      }
-    });
-
-    $('ul.nav li:last-child a').on('click', function(e){
-      e.preventDefault();
-      if ($(this).hasClass('active'))
-        return false;
-      else {
-        $('#catalogue').hide();
-        $('#mapView, #map-view-col, #map-col').show();
-        $('li.active').removeClass('active');
-        $(this).parent().addClass('active');
-        resize();
-      }
-    });
   },100);
 }
 
