@@ -121,12 +121,14 @@ button.btn.dropdown-toggle.selectpicker.btn-default {
 	margin-top	: 3px;
 }
 
-#active-layers .table-wrapper a span.glyphicon-info-sign {
+#active-layers .table-wrapper a span.glyphicon-info-sign,
+#active-layers .table-wrapper a span.glyphicon-cog {
 	font-size	: 18px;
 	margin-top	: 4px;
 }
 
-#active-layers .table-wrapper a.popover-link {
+#active-layers .table-wrapper a.popover-link,
+#active-layers .table-wrapper a span.glyphicon-zoom-in {
 	margin-right: 10px;
 }
 
@@ -376,4 +378,24 @@ button.btn.dropdown-toggle.selectpicker.btn-default {
 .modal-content {
 	text-align	: center;
 	font-size	: 17px;
+}
+
+#layer-settings.modal h4{
+	font-size: 15px;
+}
+
+#layer-settings button.btn.dropdown-toggle.selectpicker {
+	border-top-left-radius		: 0px;
+	border-bottom-left-radius	: 0px;
+	height						: 30px;
+	border-left					: none;
+}
+
+#layer-settings span.label {
+	border-top-right-radius		: 0px;
+	border-bottom-right-radius	: 0px;
+}
+
+.popover.fade.right.in .arrow {
+	display: none;
 }
