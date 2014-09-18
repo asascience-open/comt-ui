@@ -115,7 +115,7 @@ function addToMap() {
     syncTimeSlider(c.temporal);
 
     var title = obs ? '' : 'title="<img src=\'' + getLayerLegend(lyrName) + '\' alt=\'\'>"';
-    var rowHtml = '<tr data-toggle="tooltip" data-placement="right" data-html="true" ' + title + '><td title="' + lyrName + '"><div>' + lyrName + '<a href="#" title="Zoom To" data-name="' + lyrName + '"><span class="glyphicon glyphicon-zoom-in"></span><img src="./img/loading.gif"></a><a href="#" class="popover-link" data-toggle="popover" title="' + lyrName + '" data-html= "true" data-content="' + c.tSpan + '\n' + '<a target=\'_blank\' href=\'' + c.url + '\'>' + c.url + '</a>"><span class="glyphicon glyphicon-info-sign"></span></a></div></td>';
+    var rowHtml = '<tr data-toggle="tooltip" data-placement="right" data-html="true" ' + title + '><td><div>' + lyrName + '<a href="#" data-name="' + lyrName + '" data-toggle="modal" data-target="#layer-settings"><span class="glyphicon glyphicon-cog"></span><a href="#" title="Zoom To" data-name="' + lyrName + '"><span class="glyphicon glyphicon-zoom-in"></span><img src="./img/loading.gif"></a><a href="#" class="popover-link" data-toggle="popover" title="' + lyrName + '" data-html= "true"  data-name="' + lyrName + '" data-content="' + c.tSpan + '\n' + '<a target=\'_blank\' href=\'' + c.url + '\'>' + c.url + '</a>"><span class="glyphicon glyphicon-info-sign"></span></a></div></td>';
     rowHtml += '<td class="checkbox-cell"><input type="checkbox" checked value="' + lyrName + '" /></td>';
     $('#active-layers table tbody').append(rowHtml);
     $('#active-layers input:checkbox').off('click');
@@ -349,8 +349,15 @@ $(document).ready(function() {
 
   resize();
   if (!/DEV/.test(document.title)) {
-    $('.modal').modal();
+    $('#beta-notice').modal();
   }
+  $('#layer-settings').on('show.bs.modal', function (e) {
+    $('#layer-settings .modal-dialog .modal-header h4').text(e.relatedTarget.attributes["data-name"].value);
+    $('#layer-settings .modal-dialog .modal-body').html('<span class="label label-default">Color ramp</span><select class="selectpicker"></select></div>');
+    $('.modal-body .selectpicker').selectpicker();
+    if (navigator.userAgent.match(/Firefox/i))
+      $('#layer-settings .modal-dialog .modal-body span.label').css({paddingTop:'9px',paddingBottom:'7px'});
+  });
 });
 
 function syncTimeSlider(t) {
