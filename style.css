@@ -137,6 +137,30 @@ button.btn.dropdown-toggle.selectpicker.btn-default {
 	margin-top	: 3px;
 }
 
+#active-layers .table-wrapper table tbody tr td div p {
+	white-space		: nowrap;
+	margin-bottom	: 0;
+	cursor			: default;
+}
+
+#active-layers .table-wrapper table tbody tr td div span.glyphicon-time {
+	float			: left;
+	font-size		: 18px;
+	margin-top		: 4px;
+	margin-right	: 5px;
+}
+
+#active-layers .table-wrapper table tbody tr td div input.form-control {
+	margin-top		: 4px;
+	height			: 21px;
+	width			: 88px;
+	font-size		: 11px;
+	float			: left;
+	text-align		: center;
+	padding-top 	: 0;
+	padding-bottom	: 0;
+}
+
 #results {
 	margin-top: 15px;
 }
