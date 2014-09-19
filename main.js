@@ -126,6 +126,10 @@ function addToMap() {
     $('#active-layers a[title="Zoom To"]').click(function() {
       zoomToLayer(($(this).data('name')));
     });
+    if (false) {
+      $('#active-layers .table-wrapper table tbody tr td div span.glyphicon-time').addClass('red').tooltip({title:'3 days old'});
+
+    }
     fixCellWidth();
   }
   else {
