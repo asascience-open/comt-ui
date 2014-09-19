@@ -108,8 +108,12 @@ button.btn.dropdown-toggle.selectpicker.btn-default {
 	overflow-x	: hidden;
 }
 
-.table-wrapper .tooltip-inner {
+#active-layers tbody > .tooltip .tooltip-inner {
 	background-color: #fff;
+}
+
+#active-layers div table tbody tr td div .tooltip {
+	top: 93px !important;
 }
 
 #active-layers .table-wrapper a {
@@ -148,6 +152,11 @@ button.btn.dropdown-toggle.selectpicker.btn-default {
 	font-size		: 18px;
 	margin-top		: 4px;
 	margin-right	: 5px;
+	cursor			: default;
+}
+
+#active-layers .table-wrapper table tbody tr td div span.glyphicon-time.red {
+	color: #f00;
 }
 
 #active-layers .table-wrapper table tbody tr td div input.form-control {
