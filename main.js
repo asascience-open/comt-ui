@@ -118,7 +118,7 @@ function addToMap() {
     var title = obs ? '' : 'title="<img src=\'' + getLayerLegend(lyrName) + '\' alt=\'\'>"';
     var t = '';
     // var t = '<span class="glyphicon glyphicon-time"></span><input type="text" name="timeStamp" value="Jun 1, 2005" disabled class="form-control">';
-    var rowHtml = '<tr data-toggle="tooltip" data-placement="right" data-html="true" ' + title + '><td><div><p title="' + lyrName + '">' + lyrName + '</p>' + t + '<a href="#" data-name="' + lyrName + '" data-toggle="modal" data-target="#layer-settings"><span class="glyphicon glyphicon-cog"></span><a href="#" title="Zoom To" data-name="' + lyrName + '"><span class="glyphicon glyphicon-zoom-in"></span><img src="./img/loading.gif"></a><a href="#" class="popover-link" data-toggle="popover" title="' + lyrName + '" data-html= "true"  data-name="' + lyrName + '" data-content="' + c.tSpan + '\n' + '<a target=\'_blank\' href=\'' + c.url + '\'>' + c.url + '</a>"><span class="glyphicon glyphicon-info-sign"></span></a></div></td>';
+    var rowHtml = '<tr data-toggle="tooltip" data-placement="right" data-html="true" data-name="' + lyrName + '" ' + title + '><td><div><p title="' + lyrName + '">' + lyrName + '</p>' + t + '<a href="#" data-name="' + lyrName + '" data-toggle="modal" data-target="#layer-settings"><span class="glyphicon glyphicon-cog"></span><a href="#" title="Zoom To" data-name="' + lyrName + '"><span class="glyphicon glyphicon-zoom-in"></span><img src="./img/loading.gif"></a><a href="#" class="popover-link" data-toggle="popover" title="' + lyrName + '" data-html= "true"  data-name="' + lyrName + '" data-content="' + c.tSpan + '\n' + '<a target=\'_blank\' href=\'' + c.url + '\'>' + c.url + '</a>"><span class="glyphicon glyphicon-info-sign"></span></a></div></td>';
     rowHtml += '<td class="checkbox-cell"><input type="checkbox" checked value="' + lyrName + '" /></td>';
     $('#active-layers table tbody').append(rowHtml);
     $('#active-layers input:checkbox').off('click');
@@ -213,10 +213,13 @@ $(document).ready(function() {
     $('.modal-body .selectpicker').selectpicker('val',lyr.params.STYLES.split('_')[2]);
     $('.modal-body .selectpicker').data('name',lyr.name);
     $('.modal-body .selectpicker').selectpicker().on('change',function() {
-      var lyr = map.getLayersByName($(this).data('name'))[0];
+      var name = $(this).data('name');
+      var lyr = map.getLayersByName(name)[0];
       var styles = lyr.params.STYLES.split('_');
       styles[2] = $(this).val();
-      map.getLayersByName($(this).data('name'))[0].mergeNewParams({STYLES : styles.join('_')});
+      map.getLayersByName(name)[0].mergeNewParams({STYLES : styles.join('_')});
+      $('#active-layers tr[data-name="' + name + '"]').attr('data-original-title','title="<img src=\'' + getLayerLegend(name) + '\' alt=\'\'>"');
+      $('#active-layers tr[data-name="' + name + '"]').tooltip('fixTitle');
     });
     if (navigator.userAgent.match(/Firefox/i))
       $('#layer-settings .modal-dialog .modal-body span.label').css({paddingTop:'9px',paddingBottom:'7px'});
