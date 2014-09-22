@@ -196,7 +196,7 @@ $(document).ready(function() {
 
   // get color ramp options
   $.ajax({
-     url           : 'http://comt.sura.org/proxy_8081/wms/colormaps'
+     url           : wmsRoot + 'colormaps'
     ,dataType      : 'jsonp'
     ,jsonpCallback : 'processColorramps'
   });
@@ -204,7 +204,7 @@ $(document).ready(function() {
   $('#layer-settings').on('show.bs.modal', function(e) {
     var options = [];
     _.each(colorramps,function(o) {
-      options.push('<option data-content="<img width=100 height=13 src=\'http://comt.sura.org/proxy_8081/wms/colormaps?colormap=' + o + '&w=100&h=13\'> ' + o + '">' + o + '</option>');
+      options.push('<option data-content="<img width=100 height=13 src=\'' + wmsRoot + 'colormaps?colormap=' + o + '&w=100&h=13\'> ' + o + '">' + o + '</option>');
     });
     $('#layer-settings .modal-dialog .modal-header h4').text(e.relatedTarget.attributes["data-name"].value);
     $('#layer-settings .modal-dialog .modal-body').html('<span class="label label-default">Color ramp</span><select id="colorramp" class="selectpicker">' + options.join('') + '</select></div>');
@@ -267,7 +267,7 @@ $(document).ready(function() {
 
   $.when(
     $.ajax({
-       url           : wmsEndpoint
+       url           : wmsRoot + 'datasets/'
       ,dataType      : 'jsonp'
       ,jsonpCallback : 'foo'
     })
@@ -482,7 +482,7 @@ function addWMS(d) {
   _gaq.push(['_trackEvent','add layer',d.group + '-' + d.layers]);
   var lyr = new OpenLayers.Layer.WMS(
      d.group + '-' + d.layers
-    ,wmsEndpoint + d.group + '/'
+    ,wmsRoot + 'datasets/' + d.group + '/'
     ,{
        layers      : d.layers
       ,transparent : true
