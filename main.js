@@ -310,11 +310,11 @@ $(document).ready(function() {
           d.tSpan = tSpan;
 
           var layers = [];
-          _.each(_.keys(d.layers).sort(),function(l) {
+          _.each(_.sortBy(_.keys(d.layers),function(o){return cf2alias(o)}),function(l) {
             if (!name2Color[l]) {
               name2Color[l] = buttonClasses[_.size(name2Color) % buttonClasses.length];
             }
-            layers.push('<a href="#" data-idx="' + d.idx + '" data-name="' + l + '" class="btn btn-' + name2Color[l] + '">' + l + '</a>');
+            layers.push('<a href="#" data-idx="' + d.idx + '" data-name="' + l + '" class="btn btn-' + name2Color[l] + '">' + cf2alias(l) + '</a>');
           });
 
           var thumb = '<img width=60 height=60 src="https://maps.googleapis.com/maps/api/staticmap?key=AIzaSyBuB8P_e6vQcucjnE64Kh2Fwu6WzhMXZzI&path=weight:1|fillcolor:0x0000AA11|color:0x0000FFBB|' + d.spatial[1] + ',' + d.spatial[0] + '|' + d.spatial[1] + ',' + d.spatial[2] + '|' + d.spatial[3] + ',' + d.spatial[2] + '|' + d.spatial[3] + ',' + d.spatial[0] + '|' + d.spatial[1] + ',' + d.spatial[0] + '&size=60x60&sensor=false" title="Data boundaries" alt="Data boundaries">';
@@ -482,9 +482,9 @@ function isoDateToDate(s) {
 }
 
 function addWMS(d) {
-  _gaq.push(['_trackEvent','add layer',d.group + '-' + d.layers]);
+  _gaq.push(['_trackEvent','add layer',d.group + '-' + cf2alias(d.layers)]);
   var lyr = new OpenLayers.Layer.WMS(
-     d.group + '-' + d.layers
+     d.group + '-' + cf2alias(d.layers)
     ,wmsRoot + 'datasets/' + d.group + '/'
     ,{
        layers      : d.layers
@@ -845,4 +845,28 @@ function showToolTip(x,y,contents) {
 
 function processColorramps(r) {
   colorramps = _.sortBy(r,function(o){return o.toLowerCase()});
+}
+
+function cf2alias(sn) {
+  // This LUT came to me from on high.  I'm too lazy to do anything other than have
+  // underscore flatten this into an array for me (below) for it to be usable.
+  var cfmap = {
+    'time': {'standard_name':'time'},
+    'longitude': {'standard_name':'longitude', 'scale_min':'0', 'scale_max':'360'},
+    'latitude': {'standard_name':'latitude', 'scale_min':'-90', 'scale_max':'90'},
+    'ssh_geoid': {'standard_name':'sea_surface_height_above_geoid', 'scale_min':'0', 'scale_max':'7.0'},
+    'ssh_reference_datum': {'standard_name':'water_surface_height_above_reference_datum', 'scale_min':'0', 'scale_max':'7.0'},
+    'u': {'standard_name':'eastward_sea_water_velocity', 'scale_min':'0', 'scale_max':'2'},
+    'v': {'standard_name':'northward_sea_water_velocity', 'scale_min':'0', 'scale_max':'2'},
+    'hs': {'standard_name':'sea_surface_wave_significant_height', 'scale_min':'0', 'scale_max':'12'},
+    'uwind': {'standard_name':'eastward_wind', 'scale_min':'0', 'scale_max':'80'},
+    'vwind': {'standard_name':'northward_wind', 'scale_min':'0', 'scale_max':'80'},
+    'salinity': {'standard_name':'sea_water_salinity', 'scale_min':'32', 'scale_max':'37'},
+    'sst': {'standard_name':'sea_water_temperature', 'scale_min':'0', 'scale_max':'40'},
+    'ubarotropic': {'standard_name':'barotropic_eastward_sea_water_velocity', 'scale_min':'0', 'scale_max':'2'},
+    'vbarotropic': {'standard_name':'barotropic_northward_sea_water_velocity', 'scale_min':'0', 'scale_max':'2'},
+  };
+  // flatten the LUT and hunt down the alias by standard_name
+  var o = _.findWhere(_.map(cfmap,function(v,k){v.alias = k;return v}),{standard_name : sn});
+  return o ? o.alias : sn;
 }
