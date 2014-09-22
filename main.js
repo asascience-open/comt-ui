@@ -404,7 +404,11 @@ function syncTimeSlider(t) {
     }
   });
   if (times.length > 1) {
-    if (!$('#time-slider-wrapper').is(':visible')) {
+    // don't show the time slider if the 1st and last times are the same
+    if (
+      (times[0] != times[times.length - 1] && !$('#time-slider-wrapper').is(':visible'))
+      || (times[0] == times[times.length - 1] && $('#time-slider-wrapper').is(':visible'))
+    ) {
       $('#time-slider-wrapper').toggle();
     }
     times.sort();
@@ -692,6 +696,8 @@ function query(xy) {
             d.label += '] (' + $xml.find('uom').attr('code') + ')' + '</a>';
           }
           d.color = lineColors[plotData.length % lineColors.length][0];
+          d.points = {show : d.data.length == 1};
+          d.lines  = {show : d.data.length > 1};
           plotData.push(d);
           plot();
         }
@@ -769,6 +775,8 @@ function query(xy) {
             d.data.push([isoDateToDate(r.properties.time.values[i]).getTime(),val]);
           }
           d.color = lineColors[plotData.length % lineColors.length][0];
+          d.points = {show : d.data.length == 1};
+          d.lines  = {show : d.data.length > 1};
           plotData.push(d); 
         }
         plot();
