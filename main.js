@@ -3,6 +3,7 @@ var lyrQuery;
 var mapDate;
 var catalog = [];
 var plotData = [];
+var colorramps = [];
 var prevPt;
 var proj3857 = new OpenLayers.Projection("EPSG:3857");
 var proj4326 = new OpenLayers.Projection("EPSG:4326");
@@ -120,11 +121,11 @@ function addToMap() {
     $('#active-layers table tbody').append(rowHtml);
     $('#active-layers input:checkbox').off('click');
     $('#active-layers input:checkbox').click(function() { 
-      toggleLayerVisibility(($(this).val()));
+      toggleLayerVisibility($(this).val());
     });
     $('#active-layers a[title="Zoom To"]').off('click');
     $('#active-layers a[title="Zoom To"]').click(function() {
-      zoomToLayer(($(this).data('name')));
+      zoomToLayer($(this).data('name'));
     });
     if (false) {
       $('#active-layers .table-wrapper table tbody tr td div span.glyphicon-time').addClass('red').attr('data-original-title','Over 3 day(s) old').tooltip('fixTitle');
@@ -191,6 +192,34 @@ $(document).ready(function() {
         $('.popover').popover('hide');
   });
 
+  // get color ramp options
+  $.ajax({
+     url           : 'http://comt.sura.org/proxy_8081/wms/colormaps'
+    ,dataType      : 'jsonp'
+    ,jsonpCallback : 'processColorramps'
+  });
+
+  $('#layer-settings').on('show.bs.modal', function(e) {
+    var options = [];
+    _.each(colorramps,function(o) {
+      options.push('<option data-content="<img width=100 height=13 src=\'http://comt.sura.org/proxy_8081/wms/colormaps?colormap=' + o + '&w=100&h=13\'> ' + o + '">' + o + '</option>');
+    });
+    $('#layer-settings .modal-dialog .modal-header h4').text(e.relatedTarget.attributes["data-name"].value);
+    $('#layer-settings .modal-dialog .modal-body').html('<span class="label label-default">Color ramp</span><select id="colorramp" class="selectpicker">' + options.join('') + '</select></div>');
+    $('.modal-body .selectpicker').selectpicker();
+    var lyr = map.getLayersByName($(e.relatedTarget).data('name'))[0];
+    $('.modal-body .selectpicker').selectpicker('val',lyr.params.STYLES.split('_')[2]);
+    $('.modal-body .selectpicker').data('name',lyr.name);
+    $('.modal-body .selectpicker').selectpicker().on('change',function() {
+      var lyr = map.getLayersByName($(this).data('name'))[0];
+      var styles = lyr.params.STYLES.split('_');
+      styles[2] = $(this).val();
+      map.getLayersByName($(this).data('name'))[0].mergeNewParams({STYLES : styles.join('_')});
+    });
+    if (navigator.userAgent.match(/Firefox/i))
+      $('#layer-settings .modal-dialog .modal-body span.label').css({paddingTop:'9px',paddingBottom:'7px'});
+  });
+
   map = new OpenLayers.Map('mapView',{
     layers  : [
       new OpenLayers.Layer.XYZ(
@@ -232,7 +261,7 @@ $(document).ready(function() {
     }
   });
 
-  $('.selectpicker').selectpicker().on('change', filterValueSelect);
+  $('#event-list.selectpicker,#model-list.selectpicker').selectpicker().on('change',filterValueSelect);
 
   $.when(
     $.ajax({
@@ -357,13 +386,6 @@ $(document).ready(function() {
   if (!/DEV/.test(document.title)) {
     $('#beta-notice').modal();
   }
-  $('#layer-settings').on('show.bs.modal', function (e) {
-    $('#layer-settings .modal-dialog .modal-header h4').text(e.relatedTarget.attributes["data-name"].value);
-    $('#layer-settings .modal-dialog .modal-body').html('<span class="label label-default">Color ramp</span><select class="selectpicker"></select></div>');
-    $('.modal-body .selectpicker').selectpicker();
-    if (navigator.userAgent.match(/Firefox/i))
-      $('#layer-settings .modal-dialog .modal-body span.label').css({paddingTop:'9px',paddingBottom:'7px'});
-  });
 });
 
 function syncTimeSlider(t) {
@@ -812,4 +834,8 @@ function showToolTip(x,y,contents) {
     ,opacity            : 0.80
     ,'z-index'          : 10000001
   }).appendTo("body").fadeIn(200);
+}
+
+function processColorramps(r) {
+  colorramps = _.sortBy(r,function(o){return o.toLowerCase()});
 }
