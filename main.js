@@ -221,8 +221,14 @@ $(document).ready(function() {
       $('#active-layers tr[data-name="' + name + '"]').attr('data-original-title','title="<img src=\'' + getLayerLegend(name) + '\' alt=\'\'>"');
       $('#active-layers tr[data-name="' + name + '"]').tooltip('fixTitle');
     });
-    if (navigator.userAgent.match(/Firefox/i))
-      $('#layer-settings .modal-dialog .modal-body span.label').css({paddingTop:'9px',paddingBottom:'7px'});
+    $('#layer-settings .modal-dialog .modal-body').append('<br /><span class="label label-default">2D</span><select class="selectpicker" id="other-dropdown"><option value="vectors">Vectors</option><option value="barbs">Barbs</option><option value="hog">Hog</option></select><br /><span class="label label-default">Scale Length</span><div class="settings-slider-wrapper"><input type="text" id="scale-slider" class="settings-slider"></div><br /><span class="label label-default">Striding</span><div class="settings-slider-wrapper"><input type="text" id="striding-slider" class="settings-slider"></div>');
+    $('#other-dropdown').selectpicker();
+    $('.settings-slider').slider();
+    if (navigator.userAgent.match(/Firefox/i)) {
+      $('#layer-settings .modal-dialog .modal-body span.label:eq(0)').css({marginTop: '1px'});
+      $('#layer-settings .modal-dialog .modal-body span.label:eq(2), #layer-settings .modal-dialog .modal-body span.label:eq(3)').css({paddingTop: '10px'});
+      $('#layer-settings .settings-slider-wrapper').css({height: '30px'});
+    }
   });
 
   map = new OpenLayers.Map('mapView',{
