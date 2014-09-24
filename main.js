@@ -222,7 +222,7 @@ $(document).ready(function() {
       $('#active-layers tr[data-name="' + name + '"]').tooltip('fixTitle');
     });
     if (lyr.params.LAYERS.indexOf(',') >= 0) {
-      $('#layer-settings .modal-dialog .modal-body').append('<br /><span class="label label-default">2D</span><select class="selectpicker" id="plot-dropdown"><option value="vectors">Vectors</option><option value="barbs">Barbs</option><option value="hog">Hog</option></select>');
+      $('#layer-settings .modal-dialog .modal-body').append('<br /><span class="label label-default">2D</span><select class="selectpicker" id="plot-dropdown"><option value="vectors">Vectors</option><option value="barbs">Barbs</option><option value="hog">HOG</option></select>');
       $('#plot-dropdown').selectpicker();
       $('#plot-dropdown').selectpicker('val',lyr.params.STYLES.split('_')[0]);
       $('#plot-dropdown').data('name',lyr.name);
