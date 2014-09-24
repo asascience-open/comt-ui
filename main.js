@@ -207,12 +207,12 @@ $(document).ready(function() {
       options.push('<option data-content="<img width=100 height=13 src=\'' + wmsRoot + 'colormaps?colormap=' + o + '&w=100&h=13\'> ' + o + '">' + o + '</option>');
     });
     $('#layer-settings .modal-dialog .modal-header h4').text(e.relatedTarget.attributes["data-name"].value);
-    $('#layer-settings .modal-dialog .modal-body').html('<span class="label label-default">Color ramp</span><select id="colorramp" class="selectpicker">' + options.join('') + '</select></div>');
+    $('#layer-settings .modal-dialog .modal-body').html('<span class="label label-default">Color ramp</span><select id="colorramp-dropdown" class="selectpicker">' + options.join('') + '</select></div>');
     $('.modal-body .selectpicker').selectpicker();
     var lyr = map.getLayersByName($(e.relatedTarget).data('name'))[0];
-    $('.modal-body .selectpicker').selectpicker('val',lyr.params.STYLES.split('_')[2]);
-    $('.modal-body .selectpicker').data('name',lyr.name);
-    $('.modal-body .selectpicker').selectpicker().on('change',function() {
+    $('#colorramp-dropdown').selectpicker('val',lyr.params.STYLES.split('_')[2]);
+    $('#colorramp-dropdown').data('name',lyr.name);
+    $('#colorramp-dropdown').selectpicker().on('change',function() {
       var name = $(this).data('name');
       var lyr = map.getLayersByName(name)[0];
       var styles = lyr.params.STYLES.split('_');
@@ -221,9 +221,89 @@ $(document).ready(function() {
       $('#active-layers tr[data-name="' + name + '"]').attr('data-original-title','title="<img src=\'' + getLayerLegend(name) + '\' alt=\'\'>"');
       $('#active-layers tr[data-name="' + name + '"]').tooltip('fixTitle');
     });
-    $('#layer-settings .modal-dialog .modal-body').append('<br /><span class="label label-default">2D</span><select class="selectpicker" id="other-dropdown"><option value="vectors">Vectors</option><option value="barbs">Barbs</option><option value="hog">Hog</option></select><br /><span class="label label-default">Scale Length</span><div class="settings-slider-wrapper"><input type="text" id="scale-slider" class="settings-slider"></div><br /><span class="label label-default">Striding</span><div class="settings-slider-wrapper"><input type="text" id="striding-slider" class="settings-slider"></div>');
-    $('#other-dropdown').selectpicker();
-    $('.settings-slider').slider();
+    if (lyr.params.LAYERS.indexOf(',') >= 0) {
+      $('#layer-settings .modal-dialog .modal-body').append('<br /><span class="label label-default">2D</span><select class="selectpicker" id="plot-dropdown"><option value="vectors">Vectors</option><option value="barbs">Barbs</option><option value="hog">Hog</option></select>');
+      $('#plot-dropdown').selectpicker();
+      $('#plot-dropdown').selectpicker('val',lyr.params.STYLES.split('_')[0]);
+      $('#plot-dropdown').data('name',lyr.name);
+      $('#plot-dropdown').selectpicker().on('change',function() {
+        var name = $(this).data('name');
+        var lyr = map.getLayersByName(name)[0];
+        var styles = lyr.params.STYLES.split('_');
+        styles[0] = $(this).val();
+        map.getLayersByName(name)[0].mergeNewParams({STYLES : styles.join('_')});
+        $('#active-layers tr[data-name="' + name + '"]').attr('data-original-title','title="<img src=\'' + getLayerLegend(name) + '\' alt=\'\'>"');
+        $('#active-layers tr[data-name="' + name + '"]').tooltip('fixTitle');
+        if (/vectors|barbs/.test(styles[0])) {
+          $('#stridingBinwidth-label').html('Striding'); 
+          $('#stridingBinwidth-slider').data('slider').min  = 0;
+          $('#stridingBinwidth-slider').data('slider').max  = 100;
+          $('#stridingBinwidth-slider').data('slider').step = 1;
+        }
+        else {
+          $('#stridingBinwidth-label').html('Bin Width');
+          $('#stridingBinwidth-slider').data('slider').min  = 0.9;
+          $('#stridingBinwidth-slider').data('slider').max  = 100.0;
+          $('#stridingBinwidth-slider').data('slider').step = 0.1;
+        }
+      });
+
+      $('#layer-settings .modal-dialog .modal-body').append('<br /><span class="label label-default" id="stridingBinwidth-label"></span><div class="settings-slider-wrapper"><input type="text" id="stridingBinwidth-slider" class="settings-slider"></div><br /><span class="label label-default">Scale Length</span><div class="settings-slider-wrapper"><input type="text" id="scalelength-slider" class="settings-slider"></div>');
+      $('#scalelength-slider').slider({
+         min   : 1.0
+        ,max   : 20.0
+        ,step  : 0.1
+        ,value : Number(lyr.params.STYLES.split('_')[4])
+        ,formater : function(value) {
+          return Math.round(value * 10) / 10;
+        }
+      });
+      $('#scalelength-slider').data('name',lyr.name);
+      $('#scalelength-slider').slider().on('slideStop',function(e) {
+        var name = $(this).data('name');
+        var lyr = map.getLayersByName(name)[0];
+        var styles = lyr.params.STYLES.split('_');
+        styles[4] = Math.round($(this).data('slider').getValue() * 10) / 10;
+        map.getLayersByName(name)[0].mergeNewParams({STYLES : styles.join('_')});
+        $('#active-layers tr[data-name="' + name + '"]').attr('data-original-title','title="<img src=\'' + getLayerLegend(name) + '\' alt=\'\'>"');
+        $('#active-layers tr[data-name="' + name + '"]').tooltip('fixTitle');
+      });
+
+      if (/vectors|barbs/.test(lyr.params.STYLES.split('_')[0])) {
+        $('#stridingBinwidth-label').html('Striding');
+        $('#stridingBinwidth-slider').slider({
+           min   : 0
+          ,max   : 100
+          ,step  : 1
+          ,value : lyr.params.STYLES.split('_')[1] == 'average' ? 0 : Number(lyr.params.STYLES.split('_')[1])
+          ,formater : function(value) {
+            return value < 1 ? 'average' : value;
+          }
+        });
+      }
+      else {
+        $('#stridingBinwidth-label').html('Bin Width');
+        $('#stridingBinwidth-slider').slider({
+           min   : 0.9
+          ,max   : 100.0
+          ,step  : 0.1
+          ,value : lyr.params.STYLES.split('_')[1] == 'average' ? 0.9 : Number(lyr.params.STYLES.split('_')[1])
+          ,formater : function(value) {
+            return value < 1 ? 'average' : Math.round(value * 10) / 10;
+          }
+        });
+      }
+      $('#stridingBinwidth-slider').data('name',lyr.name);
+      $('#stridingBinwidth-slider').slider().on('slideStop',function(e) {
+        var name = $(this).data('name');
+        var lyr = map.getLayersByName(name)[0];
+        var styles = lyr.params.STYLES.split('_');
+        styles[1] = $(this).data('slider').getValue() < 1 ? 'average' : Math.round($(this).data('slider').getValue() * 10) / 10;
+        map.getLayersByName(name)[0].mergeNewParams({STYLES : styles.join('_')});
+        $('#active-layers tr[data-name="' + name + '"]').attr('data-original-title','title="<img src=\'' + getLayerLegend(name) + '\' alt=\'\'>"');
+        $('#active-layers tr[data-name="' + name + '"]').tooltip('fixTitle');
+      });
+    }
     if (navigator.userAgent.match(/Firefox/i)) {
       $('#layer-settings .modal-dialog .modal-body span.label:eq(0)').css({marginTop: '1px'});
       $('#layer-settings .modal-dialog .modal-body span.label:eq(2), #layer-settings .modal-dialog .modal-body span.label:eq(3)').css({paddingTop: '10px'});
@@ -276,7 +356,7 @@ $(document).ready(function() {
 
   $.when(
     $.ajax({
-       url           : wmsRoot + 'datasets/'
+       url           : 'comt.jsonp' // wmsRoot + 'datasets/'
       ,dataType      : 'jsonp'
       ,jsonpCallback : 'foo'
     })
