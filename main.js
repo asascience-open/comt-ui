@@ -356,7 +356,7 @@ $(document).ready(function() {
 
   $.when(
     $.ajax({
-       url           : 'comt.jsonp' // wmsRoot + 'datasets/'
+       url           : wmsRoot + 'datasets/'
       ,dataType      : 'jsonp'
       ,jsonpCallback : 'foo'
     })
