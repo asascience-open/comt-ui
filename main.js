@@ -329,17 +329,14 @@ $(document).ready(function() {
        min   : 0
       ,max   : 50
       ,step  : 1
-      ,value : lyr.params.STYLES.split('_')[5] == 'grid' ? 0 : Number(lyr.params.STYLES.split('_')[5])
-      ,formater : function(value) {
-        return value < 1 ? 'grid' : value;
-      }
+      ,value : $.isNumeric(lyr.params.STYLES.split('_')[5]) ? Number(lyr.params.STYLES.split('_')[5]) : 15
     });
     $('#steps-slider').data('name',lyr.name);
     $('#steps-slider').slider().on('slideStop',function(e) {
       var name = $(this).data('name');
       var lyr = map.getLayersByName(name)[0];
       var styles = lyr.params.STYLES.split('_');
-      styles[5] = $(this).data('slider').getValue() < 1 ? 'grid' : $(this).data('slider').getValue();
+      styles[5] = $(this).data('slider').getValue();
       map.getLayersByName(name)[0].mergeNewParams({STYLES : styles.join('_')});
       $('#active-layers tr[data-name="' + name + '"]').attr('data-original-title','title="<img src=\'' + getLayerLegend(name) + '\' alt=\'\'>"');
       $('#active-layers tr[data-name="' + name + '"]').tooltip('fixTitle');
