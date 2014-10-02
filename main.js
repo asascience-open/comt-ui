@@ -323,6 +323,27 @@ $(document).ready(function() {
       $('#active-layers tr[data-name="' + name + '"]').attr('data-original-title','title="<img src=\'' + getLayerLegend(name) + '\' alt=\'\'>"');
       $('#active-layers tr[data-name="' + name + '"]').tooltip('fixTitle');
     });
+
+    $('#layer-settings .modal-dialog .modal-body').append('<br /><span class="label label-default">Steps</span><div class="settings-slider-wrapper"><input type="text" id="steps-slider" class="settings-slider"></div>');
+    $('#steps-slider').slider({
+       min   : 0
+      ,max   : 50
+      ,step  : 1
+      ,value : lyr.params.STYLES.split('_')[5] == 'grid' ? 0 : Number(lyr.params.STYLES.split('_')[5])
+      ,formater : function(value) {
+        return value < 1 ? 'grid' : value;
+      }
+    });
+    $('#steps-slider').data('name',lyr.name);
+    $('#steps-slider').slider().on('slideStop',function(e) {
+      var name = $(this).data('name');
+      var lyr = map.getLayersByName(name)[0];
+      var styles = lyr.params.STYLES.split('_');
+      styles[5] = $(this).data('slider').getValue() < 1 ? 'grid' : $(this).data('slider').getValue();
+      map.getLayersByName(name)[0].mergeNewParams({STYLES : styles.join('_')});
+      $('#active-layers tr[data-name="' + name + '"]').attr('data-original-title','title="<img src=\'' + getLayerLegend(name) + '\' alt=\'\'>"');
+      $('#active-layers tr[data-name="' + name + '"]').tooltip('fixTitle');
+    });
  
     if (navigator.userAgent.match(/Firefox/i)) {
       $('#layer-settings .modal-dialog .modal-body span.label:eq(0)').css({marginTop: '1px'});
