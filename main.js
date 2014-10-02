@@ -304,6 +304,26 @@ $(document).ready(function() {
         $('#active-layers tr[data-name="' + name + '"]').tooltip('fixTitle');
       });
     }
+   
+    $('#layer-settings .modal-dialog .modal-body').append('<br /><span class="label label-default">Min / Max</span><div class="settings-slider-wrapper span2"><input type="text" id="minmax-slider" class="settings-slider"></div>');
+    $('#minmax-slider').slider({
+       min   : -25
+      ,max   : 100
+      ,step  : 1
+      ,value : [Number(lyr.params.STYLES.split('_')[3]),Number(lyr.params.STYLES.split('_')[4])]
+    });
+    $('#minmax-slider').data('name',lyr.name);
+    $('#minmax-slider').slider().on('slideStop',function(e) {
+      var name = $(this).data('name');
+      var lyr = map.getLayersByName(name)[0];
+      var styles = lyr.params.STYLES.split('_');
+      styles[3] = $(this).data('slider').getValue()[0];
+      styles[4] = $(this).data('slider').getValue()[1];
+      map.getLayersByName(name)[0].mergeNewParams({STYLES : styles.join('_')});
+      $('#active-layers tr[data-name="' + name + '"]').attr('data-original-title','title="<img src=\'' + getLayerLegend(name) + '\' alt=\'\'>"');
+      $('#active-layers tr[data-name="' + name + '"]').tooltip('fixTitle');
+    });
+ 
     if (navigator.userAgent.match(/Firefox/i)) {
       $('#layer-settings .modal-dialog .modal-body span.label:eq(0)').css({marginTop: '1px'});
       $('#layer-settings .modal-dialog .modal-body span.label:eq(2), #layer-settings .modal-dialog .modal-body span.label:eq(3)').css({paddingTop: '10px'});
