@@ -361,6 +361,10 @@ button.btn.dropdown-toggle.selectpicker.btn-default {
 	margin: 3px 5px 3px 0;
 }
 
+#time-series-controls #map-actions {
+	margin: 3px 0px 4px 5px;
+}
+
 #time-series-controls .bootstrap-select {
 	position: absolute;
 	margin-top: 3px;

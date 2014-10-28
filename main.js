@@ -419,7 +419,6 @@ $(document).ready(function() {
 
   ctlModify = new OpenLayers.Control.ModifyFeature(lyrQuery);
   ctlModify.events.register('activate',this,function(e) {
-    lyrQuery.removeAllFeatures();
     ctlPoint.deactivate();
     ctlLine.deactivate();
     ctlPolygon.deactivate();
@@ -429,7 +428,6 @@ $(document).ready(function() {
 
   ctlDrag = new OpenLayers.Control.DragFeature(lyrQuery);
   ctlDrag.events.register('activate',this,function(e) {
-    lyrQuery.removeAllFeatures();
     ctlPoint.deactivate();
     ctlLine.deactivate();
     ctlPolygon.deactivate();
@@ -522,8 +520,35 @@ $(document).ready(function() {
 
       syncFilters(cat);
 
-      $('#categories.btn-group input').on('change', categoryClick);
+      $('#categories.btn-group input').on('change',categoryClick);
       syncQueryResults();
+
+      $('#map-actions.btn-group input').on('change',function() {
+        switch($(this).attr('id')) {
+          case 'navigate' :
+            ctlPoint.deactivate();
+            ctlLine.deactivate();
+            ctlPolygon.deactivate();
+            ctlModify.deactivate();
+            ctlDrag.deactivate();
+            break;
+          case 'point' :
+            ctlPoint.activate();
+            break;
+          case 'line' :
+            ctlLine.activate();
+            break;
+          case 'polygon' :
+            ctlPolygon.activate();
+            break;
+          case 'modify' :
+            ctlModify.activate();
+            break;
+          case 'drag' :
+            ctlDrag.activate();
+            break;
+        }
+      });
     }
   );
 
