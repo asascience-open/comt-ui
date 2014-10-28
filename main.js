@@ -177,6 +177,10 @@ $(document).ready(function() {
   lyrQuery = new OpenLayers.Layer.Vector(
     'Query'
   );
+  lyrQuery.events.register('featureadded',this,function(e) {
+    var geojson = new OpenLayers.Format.GeoJSON();
+    console.log(geojson.write(e.feature.geometry.transform(proj3857,proj4326)));
+  });
 
   $('body').on('click', function(e){
     if ($('.popover.fade.right.in').css('display') == 'block')
@@ -423,6 +427,10 @@ $(document).ready(function() {
     ctlLine.deactivate();
     ctlPolygon.deactivate();
     ctlDrag.deactivate();
+    if (lyrQuery.features.length > 0) {
+      ctlModify.selectControl.select(lyrQuery.features[0]);
+      ctlModify.selectFeature(lyrQuery.features[0]);
+    }
   });
   map.addControl(ctlModify);
 
@@ -568,7 +576,7 @@ $(document).ready(function() {
 
   $('.btn').button().mouseup(function(){$(this).blur();});
   $('#active-layers button').on('click', clearMap);
-  $('#clear-graph').on('click', clearGraph);
+  $('#clear-graph').on('click', clearQuery);
   $('#active-layers div table tbody').tooltip({selector: 'tr'});
   $('#active-layers div table tbody').popover({selector: 'a.popover-link'}).on('mouseup', function(e) {
     if ($('.popover.fade.right.in').css('display') == 'block')
