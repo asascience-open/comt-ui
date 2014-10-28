@@ -177,10 +177,6 @@ $(document).ready(function() {
   lyrQuery = new OpenLayers.Layer.Vector(
     'Query'
   );
-  lyrQuery.events.register('featureadded',this,function(e) {
-    var geojson = new OpenLayers.Format.GeoJSON();
-    console.log(geojson.write(e.feature.geometry.clone().transform(proj3857,proj4326)));
-  });
 
   $('body').on('click', function(e){
     if ($('.popover.fade.right.in').css('display') == 'block')
@@ -385,9 +381,6 @@ $(document).ready(function() {
     ctlDrag.deactivate();
   });
   map.addControl(ctlPoint);
-  ctlPoint.layer.events.register('sketchstarted',function(e) {
-    console.log('start');
-  });
 
   ctlLine = new OpenLayers.Control.DrawFeature(lyrQuery,OpenLayers.Handler.Path,{
     callbacks : { 
@@ -441,6 +434,9 @@ $(document).ready(function() {
     ctlPolygon.deactivate();
     ctlModify.deactivate();
   });
+  ctlDrag.onComplete = function(f) {
+    showGeoJSON(f.geometry);
+  }
   map.addControl(ctlDrag);
 
   $('#query-results').DataTable({
@@ -847,6 +843,11 @@ function clearMap() {
 function clearQuery() {
   clearGraph();
   lyrQuery.removeAllFeatures();
+  if (map.popup) {
+    map.removePopup(map.popup);
+    map.popup.destroy();
+    delete map.popup;
+  }
 }
 
 function clearGraph() {
@@ -1093,4 +1094,28 @@ function cf2alias(sn) {
   // flatten the LUT and hunt down the alias by standard_name
   var o = _.findWhere(_.map(cfmap,function(v,k){v.alias = k;return v}),{standard_name : sn});
   return o ? o.alias : sn;
+}
+
+function showGeoJSON(g) {
+  if (lyrQuery.features.length < 0) {
+    return;
+  }
+  var v = g.getVertices();
+  var geojson = new OpenLayers.Format.GeoJSON();
+  map.popup  = new OpenLayers.Popup.FramedCloud(
+     'popup'
+    ,new OpenLayers.LonLat(v[v.length - 1].x,v[v.length- 1].y)
+    ,null
+    ,geojson.write(lyrQuery.features[0].geometry.clone().transform(proj3857,proj4326))
+    ,null
+    ,true
+    ,function(e) {
+      map.removePopup(map.popup);
+      map.popup.destroy();
+      delete map.popup;
+    }
+  );
+  map.popup.minSize = new OpenLayers.Size(300,200);
+  map.popup.maxSize = new OpenLayers.Size(300,200);
+  map.addPopup(map.popup,true);
 }
