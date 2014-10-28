@@ -1,5 +1,6 @@
 var map;
 var lyrQuery;
+var ctlPoint,ctlLine,ctlPolygon,ctlModify,ctlDrag;
 var mapDate;
 var catalog = [];
 var plotData = [];
@@ -174,18 +175,7 @@ $(document).ready(function() {
   });
 
   lyrQuery = new OpenLayers.Layer.Vector(
-     'Query points'
-    ,{styleMap : new OpenLayers.StyleMap({
-      'default' : new OpenLayers.Style(
-        OpenLayers.Util.applyDefaults({
-           pointRadius       : 5
-          ,strokeColor       : '#000000'
-          ,strokeOpacity     : 1
-          ,fillColor         : '#ff0000'
-          ,fillOpacity       : 1
-        })
-      )
-    })}
+    'Query'
   );
 
   $('body').on('click', function(e){
@@ -366,11 +356,6 @@ $(document).ready(function() {
     ,zoom   : 5
   });
 
-  map.events.register('click',this,function(e) {
-    clearQuery();
-    query(e.xy);
-  });
-
   map.events.register('addlayer',this,function(e) {
     // keep important stuff on top
     map.setLayerIndex(lyrQuery,map.layers.length - 1);
@@ -378,6 +363,79 @@ $(document).ready(function() {
       map.setLayerIndex(o,map.layers.length - 2);
     });
   });
+
+  ctlPoint = new OpenLayers.Control.DrawFeature(lyrQuery,OpenLayers.Handler.Point,{
+    callbacks : {
+      create: function(e) {
+        if (lyrQuery.features.length >= 2) {
+          lyrQuery.removeFeatures(lyrQuery.features[0]);
+        }
+      }
+    }
+  });
+  ctlPoint.events.register('activate',this,function(e) {
+    lyrQuery.removeAllFeatures(); 
+    ctlLine.deactivate();
+    ctlPolygon.deactivate();
+    ctlModify.deactivate();
+    ctlDrag.deactivate();
+  });
+  map.addControl(ctlPoint);
+  ctlPoint.layer.events.register('sketchstarted',function(e) {
+    console.log('start');
+  });
+
+  ctlLine = new OpenLayers.Control.DrawFeature(lyrQuery,OpenLayers.Handler.Path,{
+    callbacks : { 
+      point: function() {
+        lyrQuery.removeAllFeatures();
+      } 
+    } 
+  });
+  ctlLine.events.register('activate',this,function(e) {
+    lyrQuery.removeAllFeatures();
+    ctlPoint.deactivate();
+    ctlPolygon.deactivate();
+    ctlModify.deactivate();
+    ctlDrag.deactivate();
+  });
+  map.addControl(ctlLine);
+
+  ctlPolygon = new OpenLayers.Control.DrawFeature(lyrQuery,OpenLayers.Handler.Polygon,{
+    callbacks : {
+      point: function() {
+        lyrQuery.removeAllFeatures();
+      }
+    }
+  });
+  ctlPolygon.events.register('activate',this,function(e) {
+    lyrQuery.removeAllFeatures();
+    ctlPoint.deactivate();
+    ctlLine.deactivate();
+    ctlModify.deactivate();
+    ctlDrag.deactivate();
+  });
+  map.addControl(ctlPolygon);
+
+  ctlModify = new OpenLayers.Control.ModifyFeature(lyrQuery);
+  ctlModify.events.register('activate',this,function(e) {
+    lyrQuery.removeAllFeatures();
+    ctlPoint.deactivate();
+    ctlLine.deactivate();
+    ctlPolygon.deactivate();
+    ctlDrag.deactivate();
+  });
+  map.addControl(ctlModify);
+
+  ctlDrag = new OpenLayers.Control.DragFeature(lyrQuery);
+  ctlDrag.events.register('activate',this,function(e) {
+    lyrQuery.removeAllFeatures();
+    ctlPoint.deactivate();
+    ctlLine.deactivate();
+    ctlPolygon.deactivate();
+    ctlModify.deactivate();
+  });
+  map.addControl(ctlDrag);
 
   $('#query-results').DataTable({
      searching      : false
@@ -485,7 +543,7 @@ $(document).ready(function() {
 
   $('.btn').button().mouseup(function(){$(this).blur();});
   $('#active-layers button').on('click', clearMap);
-  $('#clear-query').on('click', clearQuery);
+  $('#clear-graph').on('click', clearGraph);
   $('#active-layers div table tbody').tooltip({selector: 'tr'});
   $('#active-layers div table tbody').popover({selector: 'a.popover-link'}).on('mouseup', function(e) {
     if ($('.popover.fade.right.in').css('display') == 'block')
@@ -754,9 +812,13 @@ function clearMap() {
 }
 
 function clearQuery() {
+  clearGraph();
+  lyrQuery.removeAllFeatures();
+}
+
+function clearGraph() {
   plotData = [];
   plot();
-  lyrQuery.removeAllFeatures();
 }
 
 function query(xy) {
