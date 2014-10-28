@@ -179,7 +179,7 @@ $(document).ready(function() {
   );
   lyrQuery.events.register('featureadded',this,function(e) {
     var geojson = new OpenLayers.Format.GeoJSON();
-    console.log(geojson.write(e.feature.geometry.transform(proj3857,proj4326)));
+    console.log(geojson.write(e.feature.geometry.clone().transform(proj3857,proj4326)));
   });
 
   $('body').on('click', function(e){
