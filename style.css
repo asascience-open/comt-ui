@@ -356,7 +356,7 @@ button.btn.dropdown-toggle.selectpicker.btn-default {
 	margin: 10px;
 }
 
-#time-series-controls button#clear-graph {
+#time-series-controls #graph-actions {
 	float: right;
 	margin: 3px 5px 3px 0;
 }

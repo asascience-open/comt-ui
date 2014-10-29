@@ -434,9 +434,6 @@ $(document).ready(function() {
     ctlPolygon.deactivate();
     ctlModify.deactivate();
   });
-  ctlDrag.onComplete = function(f) {
-    showGeoJSON(f.geometry);
-  }
   map.addControl(ctlDrag);
 
   $('#query-results').DataTable({
@@ -572,7 +569,8 @@ $(document).ready(function() {
 
   $('.btn').button().mouseup(function(){$(this).blur();});
   $('#active-layers button').on('click', clearMap);
-  $('#clear-graph').on('click', clearQuery);
+  $('#clear-query').on('click', clearQuery);
+  $('#run-query').on('click', runQuery);
   $('#active-layers div table tbody').tooltip({selector: 'tr'});
   $('#active-layers div table tbody').popover({selector: 'a.popover-link'}).on('mouseup', function(e) {
     if ($('.popover.fade.right.in').css('display') == 'block')
@@ -850,15 +848,23 @@ function clearQuery() {
   }
 }
 
+function runQuery() {
+  if (lyrQuery.features.length > 0) {
+    showWKT(lyrQuery.features[0].geometry);
+    if (lyrQuery.features[0].geometry.getVertices().length == 1) {
+      query(lyrQuery.features[0].geometry);
+    }
+  }
+}
+
 function clearGraph() {
   plotData = [];
   plot();
 }
 
-function query(xy) {
+function query(pt) {
   plotData = [];
-  var lonLat = map.getLonLatFromPixel(xy);
-  var pt = new OpenLayers.Geometry.Point(lonLat.lon,lonLat.lat);
+  var xy = map.getPixelFromLonLat(new OpenLayers.LonLat(pt.x,pt.y));
   var f  = new OpenLayers.Feature.Vector(pt);
   lyrQuery.addFeatures([f]);
 
@@ -938,6 +944,8 @@ function query(xy) {
       });
     }
   });
+
+  console.dir(pt);
 
   _.each(_.filter(map.layers,function(o){return o.DEFAULT_PARAMS && o.visibility}),function(l) {
     l.events.triggerEvent('loadstart');
@@ -1096,17 +1104,16 @@ function cf2alias(sn) {
   return o ? o.alias : sn;
 }
 
-function showGeoJSON(g) {
-  if (lyrQuery.features.length < 0) {
-    return;
-  }
-  var v = g.getVertices();
-  var geojson = new OpenLayers.Format.GeoJSON();
+function showWKT(g) {
+  var v   = g.getVertices();
+  var wkt = new OpenLayers.Format.WKT();
+  var f   = lyrQuery.features[0].clone();
+  f.geometry.transform(proj3857,proj4326);
   map.popup  = new OpenLayers.Popup.FramedCloud(
      'popup'
     ,new OpenLayers.LonLat(v[v.length - 1].x,v[v.length- 1].y)
     ,null
-    ,geojson.write(lyrQuery.features[0].geometry.clone().transform(proj3857,proj4326))
+    ,wkt.write(f)
     ,null
     ,true
     ,function(e) {
