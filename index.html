@@ -9,7 +9,7 @@
     <link rel="stylesheet" type="text/css" href="./lib/bootstrap-3.2.0-dist/css/bootstrap.css"/>
     <link rel="stylesheet" type="text/css" href="./lib/bootstrap-select/bootstrap-select.css"/>
     <link rel="stylesheet" type="text/css" href="./lib/bootstrap-slider/slider.css"/>
-    <link rel="stylesheet" type="text/css" href="style.css"/>
+    <link rel="stylesheet" type="text/css" href="style.css?0.001"/>
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -88,6 +88,7 @@
           <div id="time-series-div">
             <div id="time-series-controls">
               <button class="btn btn-default" id="clear-query">Clear Query</button>
+              <button class="btn btn-default" id="re-query">Re-query</button>
             </div>
             <div id="time-series-graph">
             </div>
@@ -134,7 +135,7 @@
       var wmsRoot = '<!--#echo var="wms" -->';
       var singleTile = <!--#echo var="singleTile" -->;
     </script>
-    <script type="text/javascript" src="main.js?0.04"></script>
+    <script type="text/javascript" src="main.js?0.001"></script>
 <script type="text/javascript">
   var _gaq = _gaq || [];
   _gaq.push(['_setAccount', 'UA-52706915-1']);

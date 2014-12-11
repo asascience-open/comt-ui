@@ -486,6 +486,7 @@ $(document).ready(function() {
   $('.btn').button().mouseup(function(){$(this).blur();});
   $('#active-layers button').on('click', clearMap);
   $('#clear-query').on('click', clearQuery);
+  $('#re-query').on('click', reQuery);
   $('#active-layers div table tbody').tooltip({selector: 'tr'});
   $('#active-layers div table tbody').popover({selector: 'a.popover-link'}).on('mouseup', function(e) {
     if ($('.popover.fade.right.in').css('display') == 'block')
@@ -769,6 +770,12 @@ function clearMap() {
   mapDate = false;
 }
 
+function reQuery() {
+  if (lyrQuery.features.length > 0) {
+    query(map.getPixelFromLonLat(new OpenLayers.LonLat(lyrQuery.features[0].geometry.x,lyrQuery.features[0].geometry.y)));
+  }
+}
+
 function clearQuery() {
   plotData = [];
   plot();
@@ -859,6 +866,15 @@ function query(xy) {
     }
   });
 
+/*
+  var t0 = new Date($('#time-slider').data('slider').min);
+  var t1 = new Date($('#time-slider').data('slider').max);
+*/
+
+  // Always request 2wks to either side of the mapDate
+  var t0 = new Date(mapDate.getTime() - 7 * 24 * 3600 * 1000);
+  var t1 = new Date(mapDate.getTime() + 7 * 24 * 3600 * 1000);
+
   _.each(_.filter(map.layers,function(o){return o.DEFAULT_PARAMS && o.visibility}),function(l) {
     l.events.triggerEvent('loadstart');
     var u = l.getFullRequestString({
@@ -870,7 +886,7 @@ function query(xy) {
       ,HEIGHT       : map.size.h
       ,X            : Math.round(xy.x)
       ,Y            : Math.round(xy.y)
-      ,TIME         : new Date($('#time-slider').data('slider').min).format('UTC:yyyy-mm-dd"T"HH:00:00') + '/' + new Date($('#time-slider').data('slider').max).format('UTC:yyyy-mm-dd"T"HH:00:00')
+      ,TIME         : t0.format('UTC:yyyy-mm-dd"T"HH:00:00') + '/' + t1.format('UTC:yyyy-mm-dd"T"HH:00:00')
     });
     l.activeQuery++;
     $.ajax({
