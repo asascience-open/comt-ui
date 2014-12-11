@@ -636,8 +636,14 @@ function addWMS(d) {
   lyr.times = d.times;
   lyr.bbox  = d.bbox;
   lyr.activeQuery = 0;
+
   if ($('#active-layers table tbody tr td:first-child').length == 0) {
-    map.zoomToExtent(d.bbox);
+    if (_.isNaN(d.bbox.toGeometry().getArea())) {
+      map.setCenter(new OpenLayers.LonLat(-83,28).transform(proj4326,proj3857),5);
+    }
+    else {
+      map.zoomToExtent(d.bbox);
+    }
   }
 
   lyr.events.register('loadstart',this,function(e) {
@@ -665,8 +671,14 @@ function addObs(d) {
   lyr.times = d.times;
   lyr.bbox  = d.bbox;
   lyr.activeQuery = 0;
+
   if ($('#active-layers table tbody tr td:first-child').length == 0) {
-    map.zoomToExtent(d.bbox);
+    if (_.isNaN(d.bbox.toGeometry().getArea())) {
+      map.setCenter(new OpenLayers.LonLat(-83,28).transform(proj4326,proj3857),5);
+    }
+    else {
+      map.zoomToExtent(d.bbox);
+    }
   }
 
   $.ajax({
