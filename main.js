@@ -636,7 +636,9 @@ function addWMS(d) {
   lyr.times = d.times;
   lyr.bbox  = d.bbox;
   lyr.activeQuery = 0;
-  map.zoomToExtent(d.bbox);
+  if ($('#active-layers table tbody tr td:first-child').length == 0) {
+    map.zoomToExtent(d.bbox);
+  }
 
   lyr.events.register('loadstart',this,function(e) {
     $('#active-layers a[data-name="' + e.object.name + '"] img').show();
@@ -663,7 +665,9 @@ function addObs(d) {
   lyr.times = d.times;
   lyr.bbox  = d.bbox;
   lyr.activeQuery = 0;
-  map.zoomToExtent(d.bbox);
+  if ($('#active-layers table tbody tr td:first-child').length == 0) {
+    map.zoomToExtent(d.bbox);
+  }
 
   $.ajax({
      url      : 'obs/' + d.group + '.json' + '?' + new Date().getTime() + Math.random()
